@@ -9,7 +9,9 @@
     "parcel": "^2.12.0",
     "three": "^0.167.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "buffer": "^6.0.3"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel src/index.html -p 3000 --open",
