@@ -1,13 +1,15 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import { RGBELoader } from 'three/examples/jsm/Addons.js';
+import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 
-const hdrTextureURL = new URL('../img/MR_INT-003_Kitchen_Pierre.hdr', import.meta.url);
+// const hdrTextureURL = new URL('./assets/MR_INT-005_WhiteNeons_NAD.hdr', import.meta.url);
 
 const renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+renderer.setClearColor(0xA3A3A3);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
     45,
@@ -18,49 +20,46 @@ const camera = new THREE.PerspectiveCamera(
 
 const orbitControls = new OrbitControls(camera, renderer.domElement);
 
-camera.position.set(0, 20 , 30);
+camera.position.set(10, 5 , 10);
 orbitControls.update();
-
 
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.5;
 
-const loader = new RGBELoader();
-loader.load(hdrTextureURL, function(texture) {
+const loadingManager = new THREE.LoadingManager();
+
+loadingManager.onProgress = function(url, loaded, total){
+    const progressBar = document.getElementById('progress-bar');
+    progressBar.style.width = `${(loaded / total) * 400}px`;
+}
+
+loadingManager.onLoad = function(url, loaded, total){
+    const overlay = document.getElementById('overlay');
+    overlay.style.display = 'none';
+}
+
+let carModel;
+const gltfLoader = new GLTFLoader(loadingManager);
+
+const rgbeLoader = new RGBELoader(loadingManager);
+rgbeLoader.load('./assets/MR_INT-005_WhiteNeons_NAD.hdr', (texture) => {
     texture.mapping = THREE.EquirectangularReflectionMapping;
-    scene.background = texture
-    // scene.environment = texture
-    const sphere = new THREE.Mesh(
-        new THREE.SphereGeometry(4, 50, 50),
-        new THREE.MeshStandardMaterial({
-            roughness: 0,
-            metalness: 1
-        })
-    )
-    sphere.position.x = 5
-    scene.add(sphere);
+    scene.environment = texture;
+    // scene.background = texture
+    gltfLoader.load('./assets/porsche_911_carrera_4s/scene.gltf', (gltf) => {
+        const model = gltf.scene;
+        scene.add(model);
+        carModel = model;
+    })
 
-    const sphere2 = new THREE.Mesh(
-        new THREE.SphereGeometry(4, 50, 50),
-        new THREE.MeshStandardMaterial({
-            roughness: 0,
-            metalness: 1,
-            envMap: texture
-        })
-    )
-    sphere2.position.x = -5
-    scene.add(sphere2);
+}) 
 
-})
-// const ambietLight =  new THREE.AmbientLight(0xededed, 0.8);
-// scene.add(ambietLight);
-
-// const directionLight =  new THREE.DirectionalLight(0xffffff);
-// scene.add(directionLight);
-// directionLight.position.set(0, 30, 0);
 
 function animate(time){
+    if(carModel){
+        carModel.rotation.y += 0.002;
+    }
     renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(animate);

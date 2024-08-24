@@ -1,21 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn ThreeJS</title>
-    <style>
-        html, body{
-            height: 100vh;
-            width: 100vw;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn ThreeJS</title>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    #overlay {
+      background: black;
+      position: absolute;
+      height: 100vh;
+      width: 100vw;
+      opacity: 0.5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      flex-direction: column;
+      gap: 10px;
+    }
+    #progress-bar-container {
+      position: relative;
+      height: 10px;
+      width: 400px;
+      border-radius: 25px;
+    }
+
+    #progress-bar {
+      position: absolute;
+      height: 10px;
+      width: 0%;
+      /* animation: progress-forward 3s infinite; */
+      background: white;
+      border-radius: 15px;
+    }
+  </style>
 </head>
+
 <body>
-    <script type="importmap">
+  <div id="overlay">
+    <div>Loading...</div>
+    <div id="progress-bar-container">
+      <div id="progress-bar"></div>
+    </div>
+  </div>
+  <script type="importmap">
         {
           "imports": {
             "three": "https://cdn.jsdelivr.net/npm/three@v0.149.0/build/three.module.js",
@@ -23,6 +61,7 @@
           }
         }
       </script>
-    <script type="module" src="./js/scripts.js"></script>
+  <script type="module" src="./js/scripts.js"></script>
 </body>
+
 </html>
